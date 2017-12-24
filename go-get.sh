@@ -1,0 +1,2 @@
+GOPATH="$(pwd)/"
+go get $@

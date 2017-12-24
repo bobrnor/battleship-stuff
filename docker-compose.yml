@@ -1,0 +1,43 @@
+version: "3"
+services:
+  mysql:
+    image: mysql/mysql-server
+    container_name: battleship-db
+    environment:
+      - MYSQL_DATABASE=battleship
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_ROOT_HOST=172.25.0.3
+    volumes:
+      - /private/var/battleship/mysql:/var/lib/mysql
+    networks:
+      battleship-network:
+        ipv4_address: 172.25.0.2
+    restart: "no"
+
+  server:
+    image: registry.nulana.com/bobrnor/battleship-server:latest
+    container_name: battleship-server
+    depends_on:
+      - mysql
+    volumes:
+      - /private/var/battleship/server:/external
+    networks:
+      battleship-network:
+        ipv4_address: 172.25.0.3
+
+  client:
+    image: registry.nulana.com/bobrnor/battleship-client:latest
+    depends_on:
+      - server
+    volumes:
+      - /private/var/battleship/client:/external
+    networks:
+      battleship-network:
+
+networks:
+  battleship-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.25.0.0/16

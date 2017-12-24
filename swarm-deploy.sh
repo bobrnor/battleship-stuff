@@ -1,0 +1,1 @@
+docker stack deploy -c swarm-compose.yaml --with-registry-auth battleship
